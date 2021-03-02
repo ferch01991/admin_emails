@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',
+    'mails',
+    'user_mails'
 ]
 
 AUTH_USER_MODEL = 'users.user' #modelo user customizado
