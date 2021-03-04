@@ -27,7 +27,7 @@
                 <td></td>
                 <td></td>
                 <td>
-                  <a href="" class="btn btn-info">Ver</a>
+                  <a href="{% url 'mails:detail' mail.id %}" class="btn btn-info">Ver</a>
                   <a href="{% url 'mails:update' mail.id %}" class="btn btn-warning"> Editar </a>
                   <form action="{% url 'mails:delete' mail.id%}" class="d-inline" method="POST">
                     {% csrf_token %}
