@@ -1,5 +1,9 @@
+from django.utils import timezone
 from django.shortcuts import render
 from django.shortcuts import reverse
+from django.shortcuts import redirect
+
+from django.conf import settings
 
 from django.urls import reverse_lazy
 
@@ -9,9 +13,18 @@ from django.views.generic.edit import DeleteView
 from django.views.generic.edit import UpdateView
 from django.views.generic.detail import DetailView
 
+from django.shortcuts import get_object_or_404
+
+from django.template.loader import get_template
+
+from django.core.mail import EmailMultiAlternatives
+
 from .models import Mail
+from users.models import User
+from user_mails.models import UserMail
 
 from .forms import CreateMailForm
+
 
 # Create your views here.
 class MailListView(ListView):
@@ -42,3 +55,31 @@ class MailUpdateView(UpdateView):
 class MailDetailView(DetailView):
     model = Mail
     template_name = 'mails/detail.html'
+
+def create_mail(subject, user, template_path='', context={}):
+    template = get_template(template_path)
+    content = template.render(context)
+
+    message = EmailMultiAlternatives(
+        subject,
+        'Fernando',
+        settings.EMAIL_HOST_USER,
+        [user.email]
+    )
+
+    message.attach_alternative(content, 'text/html')
+    return message
+
+
+def send(request, pk):
+    mail = get_object_or_404(Mail, pk=pk)
+    for user in User.objects.filter(newsletter=True):
+        user_mail = UserMail.objects.create(user=user, mail=mail)
+
+        context = {'mail':mail, 'user':user}
+        email = create_mail(mail.subject, user, 'mails/base/base.html', context)
+        email.send(fail_silently=False)
+
+        user_mail.sent_at = timezone.now()
+        user_mail.save()
+    return redirect('mails:detail', mail.id)
