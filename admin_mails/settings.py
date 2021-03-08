@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'user_mails'
 ]
 
+INSTALLED_APPS += ('naomi',)
+
 AUTH_USER_MODEL = 'users.user' #modelo user customizado
 
 MIDDLEWARE = [
@@ -130,3 +132,9 @@ EMAIL_HOST_USER = 'faherrera2.dev@gmail.com'
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
+
+IMAGE_DIR = BASE_DIR / 'static' / 'images'
+
+if DEBUG:
+    EMAIL_BACKEND = "naomi.mail.backends.naomi.NaomiBackend"
+    EMAIL_FILE_PATH = "/home/fercho/Documentos/admin_mails/admin_mails/tmp"
