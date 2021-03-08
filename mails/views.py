@@ -73,7 +73,10 @@ def create_mail(subject, user, template_path='', context={}):
 
 def send(request, pk):
     mail = get_object_or_404(Mail, pk=pk)
-    for user in User.objects.filter(newsletter=True):
+    # for user in User.objects.filter(newsletter=True):
+    # Left join
+    # excluir a todos los usuarios a los que se han enviaod el mail
+    for user in User.objects.exclude(usermail__mail=mail).filter(newsletter=True):
         user_mail = UserMail.objects.create(user=user, mail=mail)
 
         context = {'mail':mail, 'user':user}
