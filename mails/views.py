@@ -15,6 +15,8 @@ from django.views.generic.detail import DetailView
 
 from django.shortcuts import get_object_or_404
 
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+
 from django.template.loader import get_template
 
 from django.core.mail import EmailMultiAlternatives
@@ -73,13 +75,16 @@ def create_mail(subject, user, template_path='', context={}):
 
 def send(request, pk):
     mail = get_object_or_404(Mail, pk=pk)
+    # generamos una instancia de PasswordResetTokenGenerator
+    token_generator = PasswordResetTokenGenerator()
     # for user in User.objects.filter(newsletter=True):
     # Left join
     # excluir a todos los usuarios a los que se han enviaod el mail
     for user in User.objects.exclude(usermail__mail=mail).filter(newsletter=True):
-        user_mail = UserMail.objects.create(user=user, mail=mail)
+        token = token_generator.make_token(user)
+        user_mail = UserMail.objects.create(user=user, mail=mail, token=token)
 
-        context = {'mail':mail, 'user':user}
+        context = {'mail':mail, 'user':user, 'token':token}
         email = create_mail(mail.subject, user, 'mails/base/base.html', context)
         email.send(fail_silently=False)
 
