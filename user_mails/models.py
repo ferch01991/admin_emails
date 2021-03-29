@@ -15,7 +15,7 @@ class UserMail(models.Model):
     last_read_at = models.DateTimeField(default=None, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.mail.content} - {self.user.username}"
+        return f"{self.mail.subject} - {self.user.username} - {self.mail_sent_at}"
 
 
     def update_read(self):

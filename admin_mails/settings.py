@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users',
     'mails',
-    'user_mails'
+    'user_mails',
+    'django_inlinecss'
 ]
 
 INSTALLED_APPS += ('naomi',)

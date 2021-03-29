@@ -4,7 +4,21 @@
     <div class="row">
         <div class="col">
             <h1>{{ object.subject }}</h1>
-            <a href="{% url 'mails:send' object.id %}" class="btn btn-primary">Envíar correo</a>
+            <div>
+                <div>
+                    <strong>Alcance: {{ users }}</strong>
+                </div>
+                <div>
+                    <strong>Número de veces leído: {{reader_count}}</strong>
+                </div>
+                <div>
+                    <strong>Ultima fecha de envio: {{last_send_at}}</strong>
+                </div>
+            </div>
+
+            <div class="mt-2">
+                <a href="{% url 'mails:send' object.id %}" class="btn btn-primary">Envíar correo</a>
+            </div>
         </div>
     </div>
 
@@ -12,7 +26,32 @@
 
     <div class="row">
         <div class="col">
-            <p>{{ object.content }}</p>
+            <p>{{ object.content | safe }}</p>
+        </div>
+    </div>
+
+    <hr>
+    
+    <div class="row">
+        <div class="col">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Email</th>
+                    <th scope="col">La fecha de lectura</th>
+                    <th scope="col">N° Leido</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for user_mail in use_mails %}
+                  <tr>
+                    <td>{{ user_mail.user.email }}</td>
+                    <td>{{ user_mail.last_read_at }}</td>
+                    <td>{{ user_mail.read }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
         </div>
     </div>
 {% endblock %}

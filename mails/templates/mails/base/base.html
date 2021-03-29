@@ -1,24 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Send mail</title>
-</head>
-<body>
-    <h1>Hola {{ user.username }}</h1>
-    <div>
-        <section>
-            <p>
-                {{ mail.content }}
-            </p>
-        </section>
-    </div>
-    <div>
-        <footer>
-            <img src="http://localhost:8000/footer/?token={{token}}" alt="" width="200" height="100">
-        </footer>
-    </div>
-</body>
-</html>
+{% load inlinecss %}
+{% inlinecss "css/style.css" %}
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Send mail</title>
+    </head>
+    <body>
+        <h1>Hola {{ user.username }}</h1>
+        <div>
+            <section>
+                    {{ mail.content | safe }}
+            </section>
+        </div>
+        <div>
+            <footer>
+                <img src="http://localhost:8000/footer/?token={{token}}" alt="" width="200" height="100">
+            </footer>
+        </div>
+    </body>
+    </html>
+{% endinlinecss %}
+
+

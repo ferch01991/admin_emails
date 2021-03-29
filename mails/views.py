@@ -58,6 +58,24 @@ class MailDetailView(DetailView):
     model = Mail
     template_name = 'mails/detail.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        mail = self.get_object()
+
+        context['users'] = UserMail.objects.filter(mail=mail).count()
+        context['reader_count'] = UserMail.objects.filter(read=True).count()
+
+        user_mail = UserMail.objects.filter(mail=mail).last()
+        print(user_mail)
+        if user_mail:
+            context['last_send_at'] = user_mail.mail_sent_at
+
+        context['use_mails'] = UserMail.objects.filter(mail=mail)
+
+        return context
+
+
 def create_mail(subject, user, template_path='', context={}):
     template = get_template(template_path)
     content = template.render(context)
@@ -75,19 +93,22 @@ def create_mail(subject, user, template_path='', context={}):
 
 def send(request, pk):
     mail = get_object_or_404(Mail, pk=pk)
+    print(mail.id)
     # generamos una instancia de PasswordResetTokenGenerator
     token_generator = PasswordResetTokenGenerator()
+    print(token_generator)
     # for user in User.objects.filter(newsletter=True):
     # Left join
     # excluir a todos los usuarios a los que se han enviaod el mail
     for user in User.objects.exclude(usermail__mail=mail).filter(newsletter=True):
         token = token_generator.make_token(user)
         user_mail = UserMail.objects.create(user=user, mail=mail, token=token)
+        print(user, mail, token)
 
         context = {'mail':mail, 'user':user, 'token':token}
         email = create_mail(mail.subject, user, 'mails/base/base.html', context)
         email.send(fail_silently=False)
 
-        user_mail.sent_at = timezone.now()
+        user_mail.mail_sent_at = timezone.now()
         user_mail.save()
     return redirect('mails:detail', mail.id)
